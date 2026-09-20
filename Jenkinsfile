@@ -43,7 +43,7 @@ pipeline {
                         passwordVariable: 'DOCKER_TOKEN'
                     )
                 ]) {
-                    bat 'echo %DOCKER_TOKEN% | "%DOCKER%" login -u %DOCKER_USER% --password-stdin'
+                    bat '"%DOCKER%" login -u %DOCKER_USER% -p %DOCKER_TOKEN%'
                     bat '"%DOCKER%" push %IMAGE%'
                 }
             }
