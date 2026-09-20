@@ -64,7 +64,13 @@ pipeline {
 
         stage('Switch Traffic to Green') {
             steps {
-                bat 'powershell -Command "(Get-Content nginx.conf) -replace ''blue_backend'', ''green_backend'' | Set-Content nginx-green.conf"'
+                bat 'echo events {} > nginx-green.conf'
+                bat 'echo http { >> nginx-green.conf'
+                bat 'echo upstream blue_backend { server blue:3000; } >> nginx-green.conf'
+                bat 'echo upstream green_backend { server green:3000; } >> nginx-green.conf'
+                bat 'echo server { listen 80; location / { proxy_pass http://green_backend; } } >> nginx-green.conf'
+                bat 'echo } >> nginx-green.conf'
+
                 bat '"%DOCKER%" cp nginx-green.conf nginx-router:/etc/nginx/nginx.conf'
                 bat '"%DOCKER%" exec nginx-router nginx -t'
                 bat '"%DOCKER%" exec nginx-router nginx -s reload'
