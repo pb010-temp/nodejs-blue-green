@@ -43,7 +43,10 @@ pipeline {
                         passwordVariable: 'DOCKER_TOKEN'
                     )
                 ]) {
-                    bat 'echo %DOCKER_TOKEN% | "%DOCKER%" login -u %DOCKER_USER% --password-stdin'
+                    powershell '''
+                        $env:DOCKER_TOKEN | & $env:DOCKER login -u $env:DOCKER_USER --password-stdin
+                    '''
+
                     bat '"%DOCKER%" push %IMAGE%'
                 }
             }
